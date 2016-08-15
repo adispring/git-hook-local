@@ -31,8 +31,8 @@ COMMIT_EDITMSG=$(cat "$1")
 echo "$COMMIT_EDITMSG"
 
 if [[ $BRANCH_EXCLUDED -eq 1 ]]; then
-  echo "Branch: master/develop should not be changed locally! ⛔️ "
-  exit 1
+  echo "warning: Branch ${BRANCH_EXCLUDED} should not be changed locally! ⛔️ "
+  exit 0
 elif [[ -z $BRANCH_NAME_WITH_JIRA ]]; then
   echo "Branch name: \"$BRANCH_NAME\" does not match JIRA format. Please change it !!! ✏️ "
   exit 1
