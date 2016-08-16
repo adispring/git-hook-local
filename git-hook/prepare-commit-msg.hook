@@ -47,3 +47,4 @@ if [ -n "$BRANCH_NAME" ] && ! [[ $BRANCH_EXCLUDED -eq 1 ]] && ! [[ $BRANCH_IN_CO
 #  sed -i.bak -e '1s/^/$BRANCH_NAME /' $1
   echo "$BRANCH_NAME" $(cat "$1") > $1
 fi
+
