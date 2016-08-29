@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -n ${NODE_ENV} -a ${NODE_ENV} != "development" ]; then
+  echo "No need to install git-hook in NODE_ENV: ${NODE_ENV}."
+  exit 0
+fi
+
 LOCAL_DIR=$(pwd)
 HOOK_DIR=${LOCAL_DIR}/.git/hooks/
 HOOK_REPO_DIR=${LOCAL_DIR}/git-hook/
