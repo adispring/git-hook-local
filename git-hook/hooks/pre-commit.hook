@@ -9,11 +9,16 @@
 
 #Email check
 EMAIL=$(git config --get user.email) 
-IS_VALID_EMAIL=$(echo $EMAIL | grep '@meituan.com$')
 
-if [ -z $IS_VALID_EMAIL ]; then
-  echo "Git commit FAILED! ❌ "
-  echo "Git user.email: ${EMAIL} is invalid, please use company's email! ✏️ "
-  exit 1;
-fi
+is_valid_email() {
+  email=$1
+  is_valid=$(echo $email | grep '@meituan.com$')
+  if [ -z $is_valid ]; then
+    echo "Git commit FAILED! ❌ "
+    echo "Git user.email: ${email} is invalid, please use company's email! ✏️ "
+    exit 1;
+  fi
+}
+
+is_valid_email $EMAIL
 
