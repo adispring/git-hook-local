@@ -41,13 +41,13 @@ do
 		fi
 
     # Npm test
-    echo "**** NPM Testing... ****    🔍"
+    echo "**** NPM Testing...   ****  🔍"
     npm test &> npmtest.temp
     test_result=`cat npmtest.temp | grep "npm ERR! Test failed."`
     if [ -n "$test_result" ]
     then
       cat npmtest.temp
-      echo >&2 "**** NPM Test ERROR! ****   🐞"
+      echo >&2 "**** NPM Test ERROR!  ****  🐞"
       rm npmtest.temp
       exit 1
     else
