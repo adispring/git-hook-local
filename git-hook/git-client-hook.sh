@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-PROJECT_PATH=$(pwd)
-GIT_HOOK_PATH=${PROJECT_PATH}/.git/hooks/
-CUSTOM_HOOK_PATH=${PROJECT_PATH}/git-hook/hooks/
-HOOK_FILE_NAMES=$(ls ${CUSTOM_HOOK_PATH} | grep -E "\.hook$")
+INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd -P)"
+CUSTOM_HOOK_PATH="$INSTALL_SCRIPT_PATH/hooks"
+PROJECT_ROOT=${PROJECT_ROOT:-$(cd "$INSTALL_SCRIPT_PATH/.."; pwd -P)}
+GIT_HOOK_PATH="$PROJECT_ROOT/.git/hooks"
+HOOK_FILE_NAMES=$(ls ${CUSTOM_HOOK_PATH})
 
 is_node_env_dev() {
   node_env=$1
@@ -31,9 +32,8 @@ INSTALL_HOOKS=()
 for hook_file in ${HOOK_FILE_NAMES}
 do
   ALL_HOOKS[${#ALL_HOOKS[@]}]=${hook_file}
-  file=${hook_file%.hook}
-  if [ -f ${GIT_HOOK_PATH}${file} ]; then
-    file_diff=$(diff ${CUSTOM_HOOK_PATH}${hook_file} ${GIT_HOOK_PATH}${file})
+  if [ -f ${GIT_HOOK_PATH}/${hook_file} ]; then
+    file_diff=$(diff ${CUSTOM_HOOK_PATH}/${hook_file} ${GIT_HOOK_PATH}/${hook_file})
     
     if [ -z "$file_diff" ]; then
       EXIST_HOOKS[${#EXIST_HOOKS[@]}]=${hook_file}
@@ -52,21 +52,19 @@ else
   if [ ${#UPDATE_HOOKS[@]} -gt 0 ]; then
     for hook_file in ${UPDATE_HOOKS}
     do
-      file=${hook_file%.hook}
-      file_diff=$(diff ${CUSTOM_HOOK_PATH}${hook_file} ${GIT_HOOK_PATH}${file})
-      echo -e "${file} has changed: \n${file_diff}"
-      echo "${file} updating..."
-      cp ${CUSTOM_HOOK_PATH}${hook_file} ${GIT_HOOK_PATH}${file}
-      echo -e "${file} updated!\n"
+      file_diff=$(diff ${CUSTOM_HOOK_PATH}/${hook_file} ${GIT_HOOK_PATH}/${hook_file})
+      echo -e "${hook_file} has changed: \n${file_diff}"
+      echo "${hook_file} updating..."
+      cp ${CUSTOM_HOOK_PATH}/${hook_file} ${GIT_HOOK_PATH}/${hook_file}
+      echo -e "${hook_file} updated!\n"
      done
   fi
   if [ ${#INSTALL_HOOKS[@]} -gt 0 ]; then
     for hook_file in ${INSTALL_HOOKS}
     do
-      file=${hook_file%.hook}
-      echo "${file} installing..."
-      cp ${CUSTOM_HOOK_PATH}${hook_file} ${GIT_HOOK_PATH}${file}
-      echo -e "${file} intsalled!\n"
+      echo "${hook_file} installing..."
+      cp ${CUSTOM_HOOK_PATH}/${hook_file} ${GIT_HOOK_PATH}/${hook_file}
+      echo -e "${hook_file} intsalled!\n"
      done
   fi
   echo "GIT LOCAL HOOK install done!  🍻"
