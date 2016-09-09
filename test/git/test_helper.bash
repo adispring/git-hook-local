@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-load ../node_modules/bats-assert/all
+load ../../node_modules/bats-assert/all
 
 # Set path vars
 export TESTS_PATH="$BATS_TEST_DIRNAME"
-export PROJECT_PATH="$(cd "$TESTS_PATH/.." && pwd)"
+export PROJECT_PATH="$(cd "$TESTS_PATH/../.." && pwd)"
 export INSTALL_SCRIPT_PATH="$PROJECT_PATH/git-hook"
 
 if [ -z "$HOOK_TEST_PATH" ]; then

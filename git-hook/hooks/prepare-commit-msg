@@ -19,7 +19,7 @@ JIRA_MATCH="[A-Z][A-Z_0-9]+-[0-9]+"
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
 
 if [ -z "$BRANCHES_TO_SKIP" ]; then
-  BRANCHES_TO_SKIP=(master develop)
+  BRANCHES_TO_SKIP=(master develop test)
 fi
 
 BRANCH_EXCLUDED=$(printf "%s\n" "${BRANCHES_TO_SKIP[@]}" | grep -c "^$BRANCH_NAME$")
@@ -27,6 +27,8 @@ BRANCH_EXCLUDED=$(printf "%s\n" "${BRANCHES_TO_SKIP[@]}" | grep -c "^$BRANCH_NAM
 BRANCH_NAME_WITH_JIRA=$(echo "$BRANCH_NAME" | grep -E "$JIRA_MATCH")
 
 COMMIT_EDITMSG=$(cat "$1")
+
+BRANCH_IN_COMMIT=$(grep -c "$BRANCH_NAME" $1)
 
 if [[ $BRANCH_EXCLUDED -eq 1 ]]; then
   echo "warning: Branch ${BRANCH_EXCLUDED} should not be changed locally! ⛔️ "
@@ -39,10 +41,7 @@ elif [[ -z $COMMIT_EDITMSG ]]; then
   exit 1
 fi
 
-BRANCH_IN_COMMIT=$(grep -c "$BRANCH_NAME" $1)
-
 if [ -n "$BRANCH_NAME" ] && ! [[ $BRANCH_EXCLUDED -eq 1 ]] && ! [[ $BRANCH_IN_COMMIT -ge 1 ]]; then 
-#  sed -i.bak -e '1s/^/$BRANCH_NAME /' $1
   echo "$BRANCH_NAME" $(cat "$1") > $1
 fi
 

@@ -7,7 +7,7 @@ setup() {
   cp -rf "$INSTALL_SCRIPT_PATH" "$HOOK_TEST_PATH"
 }
 
-@test "pre-commit should fail if email format is invalid, and vice versa." {
+@test "pre-commit should exit 1 if email format is invalid" {
   git init
   git config user.email sunnyadi@163.com
   run pre-commit
