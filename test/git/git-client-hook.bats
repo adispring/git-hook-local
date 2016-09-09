@@ -8,10 +8,8 @@ setup() {
 }
 
 @test "Hook will install only when NODE_ENV equals undefined or development" {
-  git init
-  
-  unset NODE_ENV
+  chmod a+x "${HOOK_TEST_INSTALL_PATH}/git-client-hook.sh"
   run git-client-hook.sh
-  assert_success
+  assert_success "No ${HOOK_TEST_PATH}/.git/hooks exist!"
 }
 

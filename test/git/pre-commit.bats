@@ -22,3 +22,7 @@ setup() {
   run pre-commit
   assert_success
 }
+
+teardown() {
+  rm -rf $HOOK_TEST_PATH
+}
