@@ -60,7 +60,7 @@ else
     do
       echo "${hook_file} installing..."
       cp "$CUSTOM_HOOK_PATH/$hook_file" "$GIT_HOOK_PATH/$hook_file"
-      echo -e "${hook_file} intsalled!\n"
+      echo -e "${hook_file} installed!\n"
      done
   fi
   echo "GIT LOCAL HOOK install done!  🍻"

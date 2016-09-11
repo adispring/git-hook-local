@@ -38,3 +38,27 @@ setup() {
   assert_output "No need to install git-hook in NODE_ENV: release."
 }
 
+@test "Hook will install/update only if there are some new hook files/contents." {
+  git init
+
+  HOOK_TEST_FILE_NAMES=($(ls $HOOK_TEST_REPO_PATH))
+  export NODE_ENV="development"
+  run git-client-hook.sh
+  assert_line 0 "GIT LOCAL HOOK installing...! ⚙ "
+  assert_output_contains "GIT LOCAL HOOK install done!  🍻"
+  for hook_file in ${HOOK_TEST_FILE_NAMES[@]}
+  do
+    assert_output_contains "$hook_file installing..."
+    assert_output_contains "$hook_file installed!"
+  done
+
+  echo "#add sth to git_hook" >> "$HOOK_TEST_REPO_PATH/${HOOK_TEST_FILE_NAMES[0]}"
+  run git-client-hook.sh
+  assert_output_contains "${HOOK_TEST_FILE_NAMES[0]} has changed: "
+  assert_output_contains "${HOOK_TEST_FILE_NAMES[0]} updating..."
+  assert_output_contains "${HOOK_TEST_FILE_NAMES[0]} updated!"
+
+  run git-client-hook.sh
+  assert_output_contains "No git hook need to update or install."
+}
+
