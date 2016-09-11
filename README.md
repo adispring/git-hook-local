@@ -36,7 +36,6 @@ directory to your project root dir, cd project root dir, run the provided `git-c
 command, to install git hooks into `.git/hooks/`,
 
     $ git clone git@github.com:adispring/git-hook-local.git
-    $ cd ..
     $ cp -rf ./git-hook-local/git-hook your-project-root-dir/git-hook
     $ cd your-project-root-dir
     $ bash ./git-hook/git-client-hook.sh
