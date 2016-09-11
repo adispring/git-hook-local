@@ -8,7 +8,7 @@ setup() {
   chmod a+x "${HOOK_TEST_INSTALL_PATH}/git-client-hook.sh"
 }
 
-@test "If no .git/ dir exist, hook will not install." {
+@test "git-client-hook: If no .git/ dir exist, hook will not install." {
   run git-client-hook.sh
   assert_success "No ${HOOK_TEST_PATH}/.git/hooks exist!"
 
@@ -17,7 +17,7 @@ setup() {
   refute_output_contains "No ${HOOK_TEST_PATH}/.git/hooks exist!"
 }
 
-@test "Hook will install only when NODE_ENV equals undefined or development" {
+@test "git-client-hook: Hook will install only when NODE_ENV equals undefined or development" {
   git init
 
   unset NODE_ENV
@@ -38,7 +38,7 @@ setup() {
   assert_output "No need to install git-hook in NODE_ENV: release."
 }
 
-@test "Hook will install/update only if there are some new hook files/contents." {
+@test "git-client-hook: Hook will install/update only if there are some new hook files/contents." {
   git init
 
   HOOK_TEST_FILE_NAMES=($(ls $HOOK_TEST_REPO_PATH))

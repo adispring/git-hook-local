@@ -30,16 +30,39 @@ COMMIT_EDITMSG=$(cat "$1")
 
 BRANCH_IN_COMMIT=$(grep -c "$BRANCH_NAME" $1)
 
-if [[ $BRANCH_EXCLUDED -eq 1 ]]; then
-  echo "warning: Branch ${BRANCH_EXCLUDED} should not be changed locally! ⛔️ "
-  exit 0
-elif [[ -z $BRANCH_NAME_WITH_JIRA ]]; then
-  echo "Branch name: \"$BRANCH_NAME\" does not match JIRA format. Please change it !!! ✏️ "
-  exit 1
-elif [[ -z $COMMIT_EDITMSG ]]; then
-  echo "Commit message should not be Empty! Write Sth about the commit. ✏️ "
-  exit 1
-fi
+is_branch_excluded() {
+  branch_excluded=$(printf "%s\n" "${BRANCHES_TO_SKIP[@]}" | grep -c "^$BRANCH_NAME$")
+  if [[ $branch_excluded -eq 1 ]]; then
+    echo "warning: Branch ${BRANCH_NAME} should not be changed locally! ⛔️ "
+    exit 0
+  fi
+}
+    
+is_branch_has_jira() {
+  branch_name_with_jira=$(echo "$BRANCH_NAME" | grep -E "$JIRA_MATCH")
+  if [[ -z $branch_name_with_jira ]]; then
+    echo "Branch name: \"$BRANCH_NAME\" does not match JIRA format. Please change it !!! ✏️ "
+    exit 1
+  fi
+}
+
+is_commit_msg_empty() {
+  if [[ -z $COMMIT_EDITMSG ]]; then
+    echo "Commit message should not be Empty! Write Sth about the commit. ✏️ "
+    exit 1
+  fi
+}
+
+is_branch_already_in_commit() {
+  if [[ $BRANCH_IN_COMMIT -ge 1 ]]; then
+    exit 0
+  fi
+}
+
+is_branch_excluded
+is_branch_has_jira
+is_commit_msg_empty
+is_branch_already_in_commit
 
 if [ -n "$BRANCH_NAME" ] && ! [[ $BRANCH_EXCLUDED -eq 1 ]] && ! [[ $BRANCH_IN_COMMIT -ge 1 ]]; then 
   echo "$BRANCH_NAME" $(cat "$1") > $1
