@@ -2,11 +2,9 @@
 
 INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd -P)"
 CUSTOM_HOOK_PATH="$INSTALL_SCRIPT_PATH/hooks"
-CUSTOM_TEST_PATH="$INSTALL_SCRIPT_PATH/test"
 PROJECT_ROOT=${PROJECT_ROOT:-$(cd "$INSTALL_SCRIPT_PATH/.."; pwd -P)}
 GIT_HOOK_PATH="$PROJECT_ROOT/.git/hooks"
 HOOK_FILE_NAMES=$(ls ${CUSTOM_HOOK_PATH})
-TEST_PATH="$PROJECT_ROOT/test"
 
 is_node_env_dev() {
   node_env=$1
@@ -24,14 +22,6 @@ has_git_hooks_path() {
   fi
 }
 
-install_git_hook_unit_test() {
-  if [ ! -d "$TEST_PATH" ]; then
-    mkdir $TEST_PATH
-  fi
-  #TODO: add changed/update judgement
-  cp -rf "$CUSTOM_TEST_PATH/git" "$TEST_PATH"
-}
-  
 install_bats_and_assert() {
   if [ ! -f "$PROJECT_ROOT/package.json" ]; then
     echo "Node project does not have package.json !"
@@ -39,20 +29,20 @@ install_bats_and_assert() {
   fi
   if [ ! -d "$PROJECT_ROOT/node_modules" ]; then
     echo "bats installing."
-    mnpm i bats --save-dev
+    npm install bats --save-dev
     echo "bats installed."
     echo "bats-assert installing."
-    mnpm i bats-assert --save-dev
+    npm install bats-assert --save-dev
     echo "bats-assert installed."
   fi
   if [ ! -d "$PROJECT_ROOT/node_modules/bats" ]; then
     echo "bats installing."
-    mnpm i bats --save-dev
+    npm install bats --save-dev
     echo "bats installed."
   fi
   if [ ! -d "$PROJECT_ROOT/node_modules/bats-assert" ]; then
     echo "bats-assert installing."
-    mnpm i bats-assert --save-dev
+    npm install bats-assert --save-dev
     echo "bats-assert installed."
   fi
 }
@@ -60,7 +50,6 @@ install_bats_and_assert() {
 is_node_env_dev $NODE_ENV
 has_git_hooks_path $GIT_HOOK_PATH
 install_bats_and_assert
-install_git_hook_unit_test
 
 for hook_file in ${HOOK_FILE_NAMES}
 do

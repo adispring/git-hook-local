@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "bats test/git"
+    "test": "bats git-hook/test"
   },
   "repository": {
     "type": "git",

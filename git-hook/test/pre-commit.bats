@@ -5,7 +5,7 @@ setup() {
   mkdir -p "$HOOK_TEST_PATH"
   cd "$HOOK_TEST_PATH"
   cp -rf "$INSTALL_SCRIPT_PATH" "$HOOK_TEST_PATH"
-  cp "$HOOK_TEST_INSTALL_PATH/test/git/package.json" "$HOOK_TEST_PATH/package.json"
+  cp "$HOOK_TEST_INSTALL_PATH/test/package.json" "$HOOK_TEST_PATH/package.json"
   git init
 }
 
