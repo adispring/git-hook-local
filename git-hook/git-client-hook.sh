@@ -37,14 +37,20 @@ install_bats_and_assert() {
     echo "Node project does not have package.json !"
     exit 1
   fi
-  is_bats_installed=`cat "$PROJECT_ROOT/package.json" | grep "\"bats\": "`
-  if [ -z "$is_bats_installed" ]; then
+  if [ ! -d "$PROJECT_ROOT/node_modules" ]; then
+    echo "bats installing."
+    mnpm i bats --save-dev
+    echo "bats installed."
+    echo "bats-assert installing."
+    mnpm i bats-assert --save-dev
+    echo "bats-assert installed."
+  fi
+  if [ ! -d "$PROJECT_ROOT/node_modules/bats" ]; then
     echo "bats installing."
     mnpm i bats --save-dev
     echo "bats installed."
   fi
-  is_bats_assert_installed=`cat "$PROJECT_ROOT/package.json" | grep "\"bats-assert\": "`
-  if [ -z "$is_bats_assert_installed" ]; then
+  if [ ! -d "$PROJECT_ROOT/node_modules/bats-assert" ]; then
     echo "bats-assert installing."
     mnpm i bats-assert --save-dev
     echo "bats-assert installed."
