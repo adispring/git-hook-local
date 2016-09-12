@@ -32,8 +32,28 @@ install_git_hook_unit_test() {
   cp -rf "$CUSTOM_TEST_PATH/git" "$TEST_PATH"
 }
   
+install_bats_and_assert() {
+  if [ ! -f "$PROJECT_ROOT/package.json" ]; then
+    echo "Node project does not have package.json !"
+    exit 1
+  fi
+  is_bats_installed=`cat "$PROJECT_ROOT/package.json" | grep "\"bats\": "`
+  if [ -z "$is_bats_installed" ]; then
+    echo "bats installing."
+    mnpm i bats --save-dev
+    echo "bats installed."
+  fi
+  is_bats_assert_installed=`cat "$PROJECT_ROOT/package.json" | grep "\"bats-assert\": "`
+  if [ -z "$is_bats_assert_installed" ]; then
+    echo "bats-assert installing."
+    mnpm i bats-assert --save-dev
+    echo "bats-assert installed."
+  fi
+}
+  
 is_node_env_dev $NODE_ENV
 has_git_hooks_path $GIT_HOOK_PATH
+install_bats_and_assert
 install_git_hook_unit_test
 
 for hook_file in ${HOOK_FILE_NAMES}

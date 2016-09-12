@@ -1,0 +1,27 @@
+{
+  "name": "git-hook-local",
+  "version": "1.0.0",
+  "description": "git local hook for node project with unit-test: bats",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "bats test/git"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adispring/git-hook-local.git"
+  },
+  "keywords": [
+    "git",
+    "hook",
+    "bats"
+  ],
+  "author": "wangzengdi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adispring/git-hook-local/issues"
+  },
+  "homepage": "https://github.com/adispring/git-hook-local#readme"
+}
