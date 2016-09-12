@@ -37,17 +37,17 @@ setup() {
   assert_output_contains "Branch name: \"release\" does not match JIRA format. Please change it !!! ✏️ "
 }
 
-@test "prepare-commit-msg: commit message should not be empty." {
-  git config user.email wangzengdi@meituan.com
-  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
-  git checkout -b feature/TASK-9527
-  git add .
-  run git commit -m ""
-  assert_failure "Commit message should not be Empty! Write Sth about the commit. ✏️ "
-
-  run git commit -m "commit message"
-  assert_success
-}
+#@test "prepare-commit-msg: commit message should not be empty." {
+#  git config user.email wangzengdi@meituan.com
+#  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
+#  git checkout -b feature/TASK-9527
+#  git add .
+#  run git commit -m ""
+#  assert_failure "Commit message should not be Empty! Write Sth about the commit. ✏️ "
+#
+#  run git commit -m "commit message"
+#  assert_success
+#}
 
 @test "prepare-commit-msg: branch name will not add again if commit message contains it already." {
   git config user.email wangzengdi@meituan.com
