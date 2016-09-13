@@ -27,14 +27,6 @@ install_bats_and_assert() {
     echo "Node project does not have package.json !"
     exit 1
   fi
-  if [ ! -d "$PROJECT_ROOT/node_modules" ]; then
-    echo "bats installing."
-    npm install bats --save-dev
-    echo "bats installed."
-    echo "bats-assert installing."
-    npm install bats-assert --save-dev
-    echo "bats-assert installed."
-  fi
   if [ ! -d "$PROJECT_ROOT/node_modules/bats" ]; then
     echo "bats installing."
     npm install bats --save-dev
