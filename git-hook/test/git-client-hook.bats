@@ -21,22 +21,19 @@ setup() {
 
 @test "git-client-hook: Hook will install only when NODE_ENV equals undefined or development" {
   git init
-
-  unset NODE_ENV
-  export NODE_ENV
-  run git-client-hook.sh
+  (
+    unset NODE_ENV
+    export NODE_ENV
+    run git-client-hook.sh
+    refute_output_contains "No need to install git-hook in NODE_ENV: "
+  )
+  NODE_ENV="development" run git-client-hook.sh
   refute_output_contains "No need to install git-hook in NODE_ENV: "
 
-  export NODE_ENV="development"
-  run git-client-hook.sh
-  refute_output_contains "No need to install git-hook in NODE_ENV: "
-
-  export NODE_ENV="production"
-  run git-client-hook.sh
+  NODE_ENV="production" run git-client-hook.sh
   assert_output "No need to install git-hook in NODE_ENV: production."
 
-  export NODE_ENV="release"
-  run git-client-hook.sh
+  NODE_ENV="release" run git-client-hook.sh
   assert_output "No need to install git-hook in NODE_ENV: release."
 }
 
@@ -44,8 +41,7 @@ setup() {
   git init
 
   HOOK_TEST_FILE_NAMES=($(ls $HOOK_TEST_REPO_PATH))
-  export NODE_ENV="development"
-  run git-client-hook.sh
+  NODE_ENV="development" run git-client-hook.sh
   assert_output_contains "GIT LOCAL HOOK installing...! ⚙ "
   assert_output_contains "GIT LOCAL HOOK install done!  🍻"
   for hook_file in ${HOOK_TEST_FILE_NAMES[@]}
@@ -68,8 +64,7 @@ setup() {
   git init
 
   HOOK_TEST_FILE_NAMES=($(ls $HOOK_TEST_REPO_PATH))
-  export NODE_ENV="development"
-  run git-client-hook.sh
+  NODE_ENV="development" run git-client-hook.sh
   assert_output_contains "bats installing."
   assert_output_contains "bats installed."
   assert_output_contains "bats-assert installing."
@@ -87,7 +82,6 @@ setup() {
 
   rm "$HOOK_TEST_PATH/package.json"
   HOOK_TEST_FILE_NAMES=($(ls $HOOK_TEST_REPO_PATH))
-  export NODE_ENV="development"
-  run git-client-hook.sh
+  NODE_ENV="development" run git-client-hook.sh
   assert_failure  "Node project does not have package.json !"
 }
