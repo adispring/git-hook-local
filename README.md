@@ -36,15 +36,15 @@ directory to your project root dir, cd project root dir, run the provided `git-c
 command, to install git hooks into `.git/hooks/`,
 
     $ git clone git@github.com:adispring/git-hook-local.git
-    $ cp -rf ./git-hook-local/git-hook your-project-root-dir/git-hook
+    $ cp -rf ./git-hook-local/git-hook your-project-root-dir
     $ cd your-project-root-dir
     $ bash ./git-hook/git-client-hook.sh
 
-If your project is using Node, you can add the install script into `package.json` after copy the git-hook/ dir to the project root dir,
+If your project is using Node, you can add the install script into `package.json` after copy the git-hook/ dir to the project root dir, after add `git-test` and `postinstall` to `package.json`, run `npm install to install the hooks. The change of package.json as follows:
     
     "scripts": {
-      "start": "node ./worker",
-      ...
+      "test": "npm run git-test",
+      "git-test": "bats git-hook/test",
       "postinstall": "bash ./git-hook/git-client-hook.sh"
     },
 
@@ -61,8 +61,8 @@ You can add any fantasy git client hooks to the repository, or custom it for you
 
 Tests are executed using [Bats](https://github.com/sstephenson/bats):
 
-    $ bats test/git
-    $ bats test/<file>.bats
+    $ bats git-hook/test
+    $ bats git-hook/test/<file>.bats
 
 Please feel free to submit pull requests and file bugs on the [issue
 tracker](https://github.com/adispring/git-hook-local/issues).

@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "bats git-hook/test"
+    "test": "npm run git-test",
+    "git-test": "bats git-hook/test",
+    "postinstall": "bash ./git-hook/git-client-hook.sh"
   },
   "repository": {
     "type": "git",
