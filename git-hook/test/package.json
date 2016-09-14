@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "bats test/git"
+    "test": "npm run git-test",
+    "git-test": "bats git-hook/test",
+    "postinstall": "bash ./git-hook/git-client-hook.sh"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/adispring/git-hook-local/issues"
   },
-  "homepage": "https://github.com/adispring/git-hook-local#readme"
+  "homepage": "https://github.com/adispring/git-hook-local#readme",
+  "devDependencies": {
+    "bats": "^0.4.2",
+    "bats-assert": "^1.0.1"
+  }
 }
