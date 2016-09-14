@@ -24,9 +24,10 @@ commit message prepend.
 Before add branch name(JIRA TASK number) to commit message, there are some checks,
 
 Check options includes:
-1. if git commit on branch: master/develop, it will output a warning.
-2. if git commit without any message, this commit will fail.
-3. if git commit already contains a jira task number, it will not add one again.
+
+1. if commit on branch: master/develop, it will output a warning.
+2. if commit without any message, this commit will fail.
+3. if commit message already contains a jira task number, it will not add one again.
 If all passed, prepare-commit-msg will add branch name(JIRA TASK number) to commit message.
 
 ## Installing git-hook-local from source
@@ -51,6 +52,7 @@ If your project is using Node, you can add the install script into `package.json
 Before install git hooks to `.git/hooks`, there are also some checks,
 
 Check options includes:
+
 1. git hook will install only if NODE_ENV is development or undefined.
 2. if the project is managed by git.(has .git/ dir) 
 3. whether some hooks have already installed, whether hooks have changed/updated. If hook has already installed and not changed, this hook will not install again, else if it updated, it will updated.
