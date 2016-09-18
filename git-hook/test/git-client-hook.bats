@@ -7,7 +7,6 @@ setup() {
   cp -rf "$INSTALL_SCRIPT_PATH" "$HOOK_TEST_PATH"
   cp "$HOOK_TEST_INSTALL_PATH/test/package.json" "$HOOK_TEST_PATH/package.json"
   cp -rf "$HOOK_TEST_INSTALL_PATH/test/node_modules" "$HOOK_TEST_PATH"
-  echo $(ls "$HOOK_TEST_INSTALL_PATH/test/package.json") >&2 
   chmod a+x "${HOOK_TEST_INSTALL_PATH}/git-client-hook.sh"
 }
 
