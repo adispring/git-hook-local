@@ -6,12 +6,13 @@ setup() {
   cd "$HOOK_TEST_PATH"
   cp -rf "$INSTALL_SCRIPT_PATH" "$HOOK_TEST_PATH"
   cp "$HOOK_TEST_INSTALL_PATH/test/package.json" "$HOOK_TEST_PATH/package.json"
+  cp -rf "$HOOK_TEST_INSTALL_PATH/test/node_modules" "$HOOK_TEST_PATH"
   git init
+  git config user.email wangzengdi@meituan.com
+  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
 }
 
 @test "prepare-commit-msg: master/develop should not be changed locally." {
-  git config user.email wangzengdi@meituan.com
-  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
   git add .
   run git commit -m "commit message"
   assert_output_contains  "warning: Branch master should not be changed locally! ⛔️ "
@@ -24,8 +25,6 @@ setup() {
 }
 
 @test "prepare-commit-msg: branch name should contains jira task." {
-  git config user.email wangzengdi@meituan.com
-  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
   git checkout -b feature/TASK-9527
   git add .
   run git commit -m "commit message"
@@ -51,8 +50,6 @@ setup() {
 #}
 
 @test "prepare-commit-msg: branch name will not add again if commit message contains it already." {
-  git config user.email wangzengdi@meituan.com
-  bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
   git checkout -b feature/TASK-9527
   git add .
   run git commit -m "feature/TASK-9527 branch name alread in commit message"
