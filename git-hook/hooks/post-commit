@@ -1,0 +1,13 @@
+#!/bin/sh
+
+test_script="./git-hook/scripts/test.sh"
+
+branch_name=$(git symbolic-ref --short HEAD)
+commit_id=$(git log -1 HEAD --format=%H)
+result_dir=".result"
+result_dir="$result_dir/$branch_name"
+result_file="$result_dir/$commit_id"
+result_success="$result_dir/success"
+result_fail="$result_dir/fail"
+
+nohup "$test_script" 1>/dev/null 2>/dev/null &

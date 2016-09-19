@@ -2,3 +2,4 @@
 node_modules
 !git-hook/test/node_modules
 *.sw[op]
+.result
