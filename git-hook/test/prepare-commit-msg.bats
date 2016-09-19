@@ -12,16 +12,28 @@ setup() {
   bash $HOOK_TEST_INSTALL_PATH/git-client-hook.sh
 }
 
-@test "prepare-commit-msg: master/develop should not be changed locally." {
+@test "prepare-commit-msg: master/develop/test/release should not be changed locally." {
   git add .
   run git commit -m "commit message"
   assert_output_contains  "warning: Branch master should not be changed locally! ⛔️ "
 
   git checkout -b develop
-  echo 'new file' > new_file.js
+  echo 'develop' > new_file.js
   git add .
   run git commit -m "commit message"
   assert_output_contains  "warning: Branch develop should not be changed locally! ⛔️ "
+
+  git checkout -b release
+  echo 'release' > new_file.js
+  git add .
+  run git commit -m "commit message"
+  assert_output_contains  "warning: Branch release should not be changed locally! ⛔️ "
+
+  git checkout -b test
+  echo 'test' > new_file.js
+  git add .
+  run git commit -m "commit message"
+  assert_output_contains  "warning: Branch test should not be changed locally! ⛔️ "
 }
 
 @test "prepare-commit-msg: branch name should contains jira task." {
@@ -30,11 +42,11 @@ setup() {
   run git commit -m "commit message"
   assert_success
 
-  git checkout -b release
+  git checkout -b no-jira-branch
   echo 'new file' > new_file.js
   git add .
   run git commit -m "commit message"
-  assert_output_contains "Branch name: \"release\" does not match JIRA format. Please change it !!! ✏️ "
+  assert_output_contains "Branch name: \"no-jira-branch\" does not match JIRA format. Please change it !!! ✏️ "
 }
 
 #@test "prepare-commit-msg: commit message should not be empty." {
