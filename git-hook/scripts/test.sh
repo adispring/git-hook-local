@@ -2,13 +2,13 @@
 
 result_dir=".result"
 if [ ! -d "$result_dir" ]; then
-  mkdir "$result_dir"
+  mkdir -p "$result_dir"
 fi
 
 branch_name=$(git symbolic-ref --short HEAD)
 result_dir="$result_dir/$branch_name"
 if [ ! -d "$result_dir" ]; then
-  mkdir "$result_dir"
+  mkdir -p "$result_dir"
 fi
 
 #result_lock="$result_dir/lock"
