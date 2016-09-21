@@ -24,6 +24,16 @@ url="$2"
 
 z40=0000000000000000000000000000000000000000
 
+test_script="./git-hook/scripts/test.sh"
+
+branch_name=$(git symbolic-ref --short HEAD)
+commit_id=$(git log -1 HEAD --format=%H)
+result_dir=".result"
+result_dir="$result_dir/$branch_name"
+result_file="$result_dir/$commit_id"
+result_success="$result_dir/success"
+result_fail="$result_dir/fail"
+
 while read local_ref local_sha remote_ref remote_sha
 do
 	if [ "$local_sha" = $z40 ]
@@ -42,16 +52,16 @@ do
 
     # Npm test
     echo "**** NPM Testing...   ****  🔍"
-    npm test &> npmtest.temp
-    test_result=`cat npmtest.temp | grep "npm ERR! Test failed."`
-    if [ -n "$test_result" ]
+    if [ ! -f "$result_file" ] 
     then
-      cat npmtest.temp
+      "$test_script"
+    fi
+    if [ -f "$result_fail" ]
+    then
+      cat "$result_file"
       echo >&2 "**** NPM Test ERROR!  ****  🐞"
-      rm npmtest.temp
       exit 1
     else
-      rm npmtest.temp
       echo "**** NPM Test PASSED! ****  🍻"
     fi 
 	fi
