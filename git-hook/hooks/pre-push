@@ -1,24 +1,39 @@
 #!/bin/sh
 
-# An example hook script to verify what is about to be pushed.  Called by "git
-# push" after it has checked the remote status, but before anything has been
-# pushed.  If this script exits with a non-zero status nothing will be pushed.
-#
-# This hook is called with the following parameters:
+# An hook script to verify what is about to be pushed.
 #
 # $1 -- Name of the remote to which the push is being done
 # $2 -- URL to which the push is being done
 #
-# If pushing without using a named remote those arguments will be equal.
-#
 # Information about the commits which are being pushed is supplied as lines to
 # the standard input in the form:
-#
 #   <local ref> <local sha1> <remote ref> <remote sha1>
-#
-# This sample shows how to prevent push of commits where the log message starts
-# with "WIP" (work in progress).
 
+## Read config file
+GIT_HOOK_CONFIG=.git-hook.conf
+if [ -f "$GIT_HOOK_CONFIG" ]; then
+  . "$GIT_HOOK_CONFIG"
+fi
+if [ -z "$use_inc_check" ]; then
+  use_inc_check=
+else
+  use_inc_check=1
+fi
+
+## Find the directory where `npm` can be used
+cur_dir=`pwd -P`
+_depth=1
+node_dir=
+while [ -z "$node_dir" ]; do
+  _depth=$(expr $_depth + 1)
+  node_dir=`find "$cur_dir" -d $_depth -type d -name "node_modules" |head -n 1`
+done
+
+cd "$node_dir"
+cd ..
+work_dir=`pwd`
+
+## Execute pre-push hook
 remote="$1"
 url="$2"
 
@@ -26,35 +41,82 @@ z40=0000000000000000000000000000000000000000
 
 while read local_ref local_sha remote_ref remote_sha
 do
-	if [ "$local_sha" = $z40 ]
-	then
-		# Handle delete
-		:
-	else
-		if [ "$remote_sha" = $z40 ]
-		then
-			# New branch, examine all commits
-			range="$local_sha"
-		else
-			# Update to existing branch, examine new commits
-			range="$remote_sha..$local_sha"
-		fi
-
-    # Npm test
-    echo "**** NPM Testing...   ****  🔍"
-    npm test &> npmtest.temp
-    test_result=`cat npmtest.temp | grep "npm ERR! Test failed."`
-    if [ -n "$test_result" ]
-    then
-      cat npmtest.temp
-      echo >&2 "**** NPM Test ERROR!  ****  🐞"
-      rm npmtest.temp
-      exit 1
+  if [ "$local_sha" = $z40 ]; then
+    :
+  else
+    if [ -z "$use_inc_check" ]; then
+      # Npm test
+      echo "**** NPM Testing... ****  🔍"
+      npm test &> npmtest.temp
+      test_result=`cat npmtest.temp | grep "npm ERR! Test failed."`
+      if [ -n "$test_result" ]
+      then
+        cat npmtest.temp
+        echo >&2 "**** NPM Test ERROR! ****  🐞 "
+        rm npmtest.temp
+        exit 1
+      else
+        rm npmtest.temp
+        echo "**** NPM Test PASSED! ****  🍻 "
+      fi
     else
-      rm npmtest.temp
-      echo "**** NPM Test PASSED! ****  🍻"
-    fi 
-	fi
+      # ESlint just for incremental files
+
+      # Prepare JS files
+      if [ "$remote_sha" = $z40 ]; then
+        range=`git merge-base origin/master HEAD`
+        range="$range..."
+      else
+        range="$remote_sha..$local_sha"
+      fi
+      echo "git diff --name-status $range"
+      files=`git diff --name-status "$range" |grep "^[AM]" |awk '{ print $2 }' |grep "\.js$"`
+
+      eslint_bin="$node_dir/.bin/eslint"
+      eslint_config="$work_dir/.eslintrc.json"
+      eslint_ignore="$work_dir/.eslintignore"
+
+      if [ ! -e "$eslint_bin" ]; then
+        echo >&2 "Not found 'eslint' bin file, please install it with npm"
+        echo "Ignore ESlint check"
+        exit 0
+      else
+        if [ -f "$eslint_config" ]; then
+          eslint_config="-c $eslint_config"
+        else
+          eslint_config=
+        fi
+        if [ -f "$eslint_ignore" ]; then
+          eslint_ignore="--ignore-path $eslint_ignore"
+        else
+          eslint_ignore=
+        fi
+
+        if [ -z "$files" ]; then
+          # no js files modified or added
+          exit 0
+        else
+          cd "$cur_dir"
+          echo "$files"
+          echo "eslint version: " "$("$eslint_bin" --version)"
+          lint_result=$(echo "$files" |xargs "$eslint_bin" \
+            $eslint_config $eslint_ignore \
+            >"$work_dir/temp_file" && echo "ESlint Passed!")
+          cat "$work_dir/temp_file"
+          if [ -z "$lint_result" ]; then
+            echo >&2 "**** ESlint Not Passed ****  🐞 "
+            exitcode=1
+          else
+            echo "**** ESlint Passed ****  🍻 "
+            exitcode=0
+          fi
+          rm "$work_dir/temp_file"
+          echo ""
+          exit $exitcode
+        fi
+      fi
+    fi
+  fi
 done
 
 exit 0

@@ -2,9 +2,17 @@
 
 INSTALL_SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd -P)"
 CUSTOM_HOOK_PATH="$INSTALL_SCRIPT_PATH/hooks"
-PROJECT_ROOT=${PROJECT_ROOT:-$(cd "$INSTALL_SCRIPT_PATH/.."; pwd -P)}
-GIT_HOOK_PATH="$PROJECT_ROOT/.git/hooks"
 HOOK_FILE_NAMES=$(ls ${CUSTOM_HOOK_PATH})
+PROJECT_ROOT=${PROJECT_ROOT:-$(cd "$INSTALL_SCRIPT_PATH/.."; pwd -P)}
+
+## Find .git folder
+_CURRENT_DIR=`pwd`
+cd "$PROJECT_ROOT"
+while [ ! -d ".git" ]; do
+  cd ..
+done
+GIT_HOOK_PATH="$(pwd -P)/.git/hooks"
+cd "$_CURRENT_DIR"
 
 is_node_env_dev() {
   node_env=$1
@@ -38,7 +46,7 @@ install_bats_and_assert() {
     echo "bats-assert installed."
   fi
 }
-  
+
 is_node_env_dev $NODE_ENV
 has_git_hooks_path $GIT_HOOK_PATH
 install_bats_and_assert
@@ -48,7 +56,7 @@ do
   ALL_HOOKS+=($hook_file)
   if [ -f "$GIT_HOOK_PATH/$hook_file" ]; then
     file_diff=$(diff "$CUSTOM_HOOK_PATH/$hook_file" "$GIT_HOOK_PATH/$hook_file")
-    
+
     if [ -z "$file_diff" ]; then
       EXIST_HOOKS+=(${hook_file})
     else
@@ -82,5 +90,4 @@ else
      done
   fi
   echo "GIT LOCAL HOOK install done!  🍻"
-fi 
-
+fi
